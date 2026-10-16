@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#16bf83">
+    <meta name="description" content="Join a friend for a fast with HolyBite.">
+    <title>Join my fast | HolyBite</title>
+    <style>
+      :root {
+        color-scheme: light;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        color: #26333a;
+        background: #f4f7f8;
+      }
+      * { box-sizing: border-box; }
+      body {
+        min-height: 100vh;
+        margin: 0;
+        display: grid;
+        place-items: center;
+        padding: 24px;
+      }
+      main {
+        width: min(100%, 440px);
+        padding: 32px 26px;
+        border-radius: 28px;
+        background: #fff;
+        box-shadow: 0 12px 36px rgb(28 56 48 / 10%);
+        text-align: center;
+      }
+      .brand { color: #13a873; font-size: 15px; font-weight: 750; letter-spacing: .04em; }
+      .mark {
+        width: 66px; height: 66px; margin: 22px auto 16px;
+        display: grid; place-items: center; border-radius: 22px;
+        background: #e8f8f1; color: #13a873; font-size: 32px;
+      }
+      h1 { margin: 0; font-size: clamp(25px, 7vw, 32px); line-height: 1.2; }
+      p { color: #5d6a70; line-height: 1.55; }
+      .code {
+        margin: 22px 0 18px; padding: 16px; border: 1px solid #d9e9e2;
+        border-radius: 16px; background: #f7fbf9;
+      }
+      .code-label { display: block; color: #75827c; font-size: 11px; font-weight: 700; letter-spacing: .12em; }
+      #invite-code { display: block; margin-top: 5px; color: #118b62; font-size: 22px; font-weight: 750; letter-spacing: .1em; overflow-wrap: anywhere; }
+      a.button, button {
+        width: 100%; min-height: 52px; display: flex; align-items: center; justify-content: center;
+        border: 0; border-radius: 16px; font: inherit; font-weight: 700; text-decoration: none; cursor: pointer;
+      }
+      a.button { color: #fff; background: #13bf83; }
+      button { margin-top: 10px; color: #13865f; background: #e8f8f1; }
+      .help { margin: 20px 0 0; font-size: 13px; }
+      .help a { color: #13865f; }
+      #status { min-height: 20px; margin: 10px 0 0; color: #13865f; font-size: 13px; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <div class="brand">HOLYBITE</div>
+      <div class="mark" aria-hidden="true">✦</div>
+      <h1>Let’s fast together</h1>
+      <p>A friend invited you to join them on HolyBite. Open the app to connect and encourage one another along the way.</p>
+      <div class="code" id="code-card" hidden>
+        <span class="code-label">YOUR INVITE CODE</span>
+        <span id="invite-code"></span>
+      </div>
+      <a class="button" id="open-app" href="#">Open in HolyBite</a>
+      <button id="copy-code" type="button" hidden>Copy invite code</button>
+      <p class="help">If the app doesn’t open, open HolyBite, choose <strong>Fasting Buddies</strong>, and enter the invite code above.</p>
+      <p id="status" role="status" aria-live="polite"></p>
+    </main>
+    <script>
+      const code = new URLSearchParams(window.location.search).get('code') || '';
+      const validCode = /^[a-z0-9]{16,64}$/i.test(code);
+      const codeCard = document.getElementById('code-card');
+      const copyButton = document.getElementById('copy-code');
+      const status = document.getElementById('status');
+      const openApp = document.getElementById('open-app');
+
+      if (validCode) {
+        const normalizedCode = code.toLowerCase();
+        document.getElementById('invite-code').textContent = normalizedCode.toUpperCase();
+        codeCard.hidden = false;
+        copyButton.hidden = false;
+        openApp.href = `holybite://buddy/invite?code=${encodeURIComponent(normalizedCode)}`;
+        copyButton.addEventListener('click', async () => {
+          try {
+            await navigator.clipboard.writeText(normalizedCode.toUpperCase());
+            status.textContent = 'Invite code copied.';
+          } catch (_) {
+            status.textContent = 'Select and copy the invite code above.';
+          }
+        });
+      } else {
+        openApp.hidden = true;
+        document.querySelector('.help').textContent = 'Ask your friend to send you a new invite link or code.';
+      }
+    </script>
+  </body>
+</html>
